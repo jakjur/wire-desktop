@@ -17,7 +17,7 @@
  *
  */
 
-import * as Electron from 'electron';
+import {app, ipcMain} from 'electron';
 
 import {config} from '../settings/config';
 import {settings} from '../settings/ConfigurationPersistence';
@@ -156,8 +156,6 @@ const tr_TR = require('../../locale/tr-TR');
 const uk_UA = require('../../locale/uk-UA');
 const zh_CN = require('../../locale/zh-CN');
 
-const app = Electron.app || Electron.remote.app;
-
 export const LANGUAGES: SupportedI18nLanguageObject = {
   cs: cs_CZ,
   da: da_DK,
@@ -289,3 +287,20 @@ export const setLocale = (locale: string): void => {
   current = parseLocale(locale);
   settings.save(SettingsType.LOCALE, current);
 };
+
+ipcMain.handle('LOCALE', (_event, type: string, ...additionalData: any[]) => {
+  switch (type) {
+    case 'getLanguages': {
+      return LANGUAGES;
+    }
+    case 'getCurrent': {
+      return getCurrent();
+    }
+    case 'getText': {
+      return getText(additionalData[0], additionalData[1]);
+    }
+    default: {
+      return '';
+    }
+  }
+});

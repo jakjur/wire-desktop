@@ -17,6 +17,8 @@
  *
  */
 
+import {ipcMain} from 'electron';
+
 const wireJson: WireJson = require('../../wire.json');
 
 interface WireJson {
@@ -74,3 +76,14 @@ export const config = {
   userAgent:
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
 };
+
+ipcMain.handle('CONFIG', (_event, type: string) => {
+  switch (type) {
+    case 'getConfig': {
+      return config;
+    }
+    default: {
+      return '';
+    }
+  }
+});

@@ -71,7 +71,7 @@ const showWindow = async () => {
       show: false,
       title: config.name,
       webPreferences: {
-        enableRemoteModule: true,
+        enableRemoteModule: false,
         javascript: false,
         nodeIntegration: false,
         nodeIntegrationInWorker: false,

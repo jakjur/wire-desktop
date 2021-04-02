@@ -17,6 +17,7 @@
  *
  */
 
+import {ipcMain} from 'electron';
 import {config} from '../settings/config';
 import {settings} from '../settings/ConfigurationPersistence';
 import {SettingsType} from '../settings/SettingsType';
@@ -140,3 +141,11 @@ export const web = {
     return `${baseUrl}${path || ''}`;
   },
 };
+
+ipcMain.handle('ENVIRONMENTUTIL', (_event, type: 'getPlatform') => {
+  switch (type) {
+    case 'getPlatform': {
+      return platform;
+    }
+  }
+});

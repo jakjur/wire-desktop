@@ -27,6 +27,7 @@ import {
   HeadersReceivedResponse,
   ipcMain,
   Menu,
+  nativeTheme,
   OnHeadersReceivedListenerDetails,
   WebContents,
 } from 'electron';
@@ -174,6 +175,8 @@ const bindIpcEvents = (): void => {
   ipcMain.on(EVENT_TYPE.ABOUT.SHOW, () => AboutWindow.showWindow());
 
   ipcMain.handle(EVENT_TYPE.ACTION.GET_OG_DATA, (_event, url) => getOpenGraphDataAsync(url));
+  ipcMain.handle('SHOULD_USE_DARK_COLORS', _event => nativeTheme.shouldUseDarkColors);
+  nativeTheme.on('updated', () => main.webContents.send('NATIVE_THEME_UPDATED'));
 };
 
 const checkConfigV0FullScreen = (mainWindowState: windowStateKeeper.State): void => {
@@ -224,7 +227,7 @@ const showMainWindow = async (mainWindowState: windowStateKeeper.State): Promise
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       backgroundThrottling: false,
-      enableRemoteModule: true,
+      enableRemoteModule: false,
       nodeIntegration: false,
       preload: PRELOAD_JS,
       webviewTag: true,
@@ -558,7 +561,7 @@ class ElectronWrapperInit {
             webPreferences.preload = PRELOAD_RENDERER_JS;
             webPreferences.spellcheck = enableSpellChecking;
             webPreferences.webSecurity = true;
-            webPreferences.enableRemoteModule = true;
+            webPreferences.enableRemoteModule = false;
             webPreferences.worldSafeExecuteJavaScript = true;
           });
           break;
