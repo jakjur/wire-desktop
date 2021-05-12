@@ -21,7 +21,7 @@ pipeline {
                 }
                 failure {
                     echo "Build Failure";
-                    mail body: "Please visit jenkins for further information", subject: "Build failed", to: "maattizdabrowy@op.pl";
+                    mail body: "Please visit jenkins for further information", subject: "Build failed", to: "jakub.jurczak42@gmail.com";
                 }
             }
         }
@@ -45,7 +45,7 @@ pipeline {
                 }
                 failure {
                     echo "Test Failure";
-                    mail body: "Please visit jenkins for further information", subject: "Build failed", to: "maattizdabrowy@op.pl";
+                    mail body: "Please visit jenkins for further information", subject: "Build failed", to: "jakub.jurczak42@gmail.com";
                 }
             }
         }
