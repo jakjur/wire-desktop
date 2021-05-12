@@ -1,54 +1,45 @@
-pipeline {
+ pipeline {
+
     agent any
- 
-    stages {
+	tools {nodejs "nodejs"}
+    stages{
+
         stage('Build'){
-            steps {
-                sh 'curl -sL https://deb.nodesource.com/setup_14.x | bash -'
-                sh 'apt-get install nodejs -y'
-                sh 'npm install --global --force yarn'
 
-                sh 'git pull'
-                sh 'yarn'
-                sh 'yarn build:linux'
-            }
-            post {
-                always {
-                    echo "Build stage finished";
-                }
-                success{
-                    echo "Build Success";
-                }
-                failure {
-                    echo "Build Failure";
-                    mail body: "Please visit jenkins for further information", subject: "Build failed", to: "jakub.jurczak42@gmail.com";
+            steps{
+                echo "Building..."
+				withNPM(npmrcConfig: '6c78e79e-2b95-48d5-8ce5-40bcc985cc20') {
+				sh 'npm install'
+				}
+				sh 'npm run build'
                 }
             }
-        }
+
+
         stage('Test') {
-            when {
-              expression {
-                currentBuild.result == null || currentBuild.result == 'SUCCESS' 
-              }
-            }
-            steps {
-                sh 'yarn test'
-                
-            }
 
-            post {
-                always {
-                    echo "Test stage finished";
-                }
-                success{
-                    echo "Test Success";
-                }
-                failure {
-                    echo "Test Failure";
-                    mail body: "Please visit jenkins for further information", subject: "Build failed", to: "jakub.jurczak42@gmail.com";
-                }
+            steps{
+                echo 'Start testing'
+                sh 'npm run test'
             }
         }
     }
-    
+
+
+    post {
+
+        success {
+            emailext attachLog: true, 
+                body: "Test status: ${currentBuild.currentResult}", 
+                subject: 'Test passed', 
+                to: 'jakub.jurczak42@gmail.com  '
+        }
+
+        failure {
+            emailext attachLog: true, 
+                body: "Test status: ${currentBuild.currentResult}",
+                subject: 'Test failed', 
+                to: 'jakub.jurczak42@gmail.com'
+        }
+    }
 }
